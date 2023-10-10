@@ -5,9 +5,8 @@ services:
   php:
     build:
       context: .
-      target: frankenphp_dev
+      target: php_dev
     volumes:
-      #- ./docker/php/certs:/etc/caddy/certs:ro
       - ./:/srv/app
       - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
       # If you develop on Mac or Windows you can remove the vendor/ directory
@@ -15,7 +14,6 @@ services:
       #- /srv/app/vendor
     environment:
       # See https://xdebug.org/docs/all_settings#mode
-      #CADDY_EXTRA_CONFIG: "tls /etc/caddy/certs/tls.pem /etc/caddy/certs/tls.key"
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
@@ -26,5 +24,5 @@ services:
 ###> doctrine/doctrine-bundle ###
   database:
     ports:
-      - "5432"
+      - "15432:5432"
 ###< doctrine/doctrine-bundle ###
