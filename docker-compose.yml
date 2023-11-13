@@ -64,7 +64,8 @@ services:
     nginx:
         image: nginx:latest
         volumes:
-            - './nginx-conf:/etc/nginx/conf.d'
+            - './docker/nginx:/etc/nginx/conf.d'
+            - './public:/var/www/gus/public'
             - phppgadmin_data:/var/www/html/:ro
         ports:
             - "80:80"

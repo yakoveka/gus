@@ -25,6 +25,9 @@ class Expense
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $currency = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $date = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +77,18 @@ class Expense
     public function setCurrency(?string $currency): static
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getDate(): ?string
+    {
+        return $this->date;
+    }
+
+    public function setDate(?string $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }

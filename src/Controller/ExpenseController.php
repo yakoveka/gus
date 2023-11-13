@@ -36,6 +36,8 @@ class ExpenseController extends AbstractController
                 'description' => $expense->getDescription(),
                 'spending' => $expense->getSpending(),
                 'currency' => $expense->getCurrency(),
+                'date' => $expense->getDate(),
+                'changed' => false,
             ];
         }
 
@@ -47,11 +49,14 @@ class ExpenseController extends AbstractController
     {
         $entityManager = $doctrine->getManager();
 
+        $parameters = json_decode($request->getContent(), true);
+
         $expense = new Expense();
-        $expense->setCategory($request->request->get('name'));
-        $expense->setDescription($request->request->get('description'));
-        $expense->setSpending($request->request->get('spending'));
-        $expense->setCurrency($request->request->get('currency'));
+        $expense->setCategory($parameters['category'] ?? '');
+        $expense->setDescription($parameters['description'] ?? '');
+        $expense->setSpending((float)$parameters['spending'] ?? 0);
+        $expense->setCurrency($parameters['currency'] ?? '');
+        $expense->setDate($parameters['date'] ?? '');
 
         $entityManager->persist($expense);
         $entityManager->flush();
@@ -62,6 +67,7 @@ class ExpenseController extends AbstractController
             'description' => $expense->getDescription(),
             'spending' => $expense->getSpending(),
             'currency' => $expense->getCurrency(),
+            'date' => $expense->getDate(),
         ];
 
         return $this->json($data);
@@ -98,10 +104,13 @@ class ExpenseController extends AbstractController
             return $this->json('No expense found for id' . $id, 404);
         }
 
-        $expense->setCategory($request->request->get('name'));
-        $expense->setDescription($request->request->get('description'));
-        $expense->setSpending($request->request->get('spending'));
-        $expense->setCurrency($request->request->get('currency'));
+        $parameters = json_decode($request->getContent(), true);
+
+        $expense->setCategory($parameters['category'] ?? '');
+        $expense->setDescription($parameters['description'] ?? '');
+        $expense->setSpending((float)$parameters['spending'] ?? 0);
+        $expense->setCurrency($parameters['currency'] ?? '');
+        $expense->setDate($parameters['date']);
         $entityManager->flush();
 
         $data = [
@@ -110,6 +119,7 @@ class ExpenseController extends AbstractController
             'description' => $expense->getDescription(),
             'spending' => $expense->getSpending(),
             'currency' => $expense->getCurrency(),
+            'date' => $expense->getDate(),
         ];
 
         return $this->json($data);
