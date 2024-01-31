@@ -22,3 +22,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Entity\User
+    service:
+        mailer: fos_user.mailer.noop
+    from_email:
+        address: "yakoveka@gmail.com"
+        sender_name: "yakoveka@gmail.com"

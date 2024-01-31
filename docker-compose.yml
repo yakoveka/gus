@@ -16,19 +16,19 @@ services:
             # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
             # - ./docker/db/data:/var/lib/postgresql/data:rw
     ###< doctrine/doctrine-bundle ###
-    phppgadmin:
-        restart: always
-        image: dockage/phppgadmin:latest
-        ports:
-            - 5433:5432
-        networks:
-            - gus
-        environment:
-            PHP_PG_ADMIN_SERVER_HOST: database
-            PHP_PG_ADMIN_SERVER_PORT: 5432
-            PHP_PG_ADMIN_SERVER_DEFAULT_DB: postgres
-        depends_on:
-            - database
+#    phppgadmin:
+#        restart: always
+#        image: dockage/phppgadmin:latest
+#        ports:
+#            - 5433:5432
+#        networks:
+#            - gus
+#        environment:
+#            PHP_PG_ADMIN_SERVER_HOST: database
+#            PHP_PG_ADMIN_SERVER_PORT: 5432
+#            PHP_PG_ADMIN_SERVER_DEFAULT_DB: postgres
+#        depends_on:
+#            - database
 #    pgadmin:
 #        restart: always
 #        image: dpage/pgadmin4:latest

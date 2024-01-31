@@ -14,7 +14,7 @@ services:
       #- /srv/app/vendor
     environment:
       # See https://xdebug.org/docs/all_settings#mode
-      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      XDEBUG_MODE: "${XDEBUG_MODE:-debug}"
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
@@ -26,3 +26,14 @@ services:
     ports:
       - "15432:5432"
 ###< doctrine/doctrine-bundle ###
+
+###> symfony/mailer ###
+#  mailer:
+#    image: axllent/mailpit
+#    ports:
+#      - "1025"
+#      - "8025"
+#    environment:
+#      MP_SMTP_AUTH_ACCEPT_ANY: 1
+#      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+###< symfony/mailer ###
