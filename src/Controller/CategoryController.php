@@ -38,6 +38,8 @@ class CategoryController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $user = $this->getUser();
         $userId = $user->getId();
 
