@@ -1,0 +1,21 @@
+{% import "macro/form.html.twig" as forms %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <h2>Daily</h2>
+        {% for category in daily %}
+            {{ forms.renderCategory(category) }}
+        {% endfor %}
+        <h2>Home</h2>
+        {% for category in home %}
+            {{ forms.renderCategory(category) }}
+        {% endfor %}
+        <h2>Major</h2>
+        {% for category in major %}
+            {{ forms.renderCategory(category) }}
+        {% endfor %}
+    </div>
+    {{ form(form) }}
+{% endblock %}

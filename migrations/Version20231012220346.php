@@ -21,7 +21,9 @@ final class Version20231012220346 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE expense_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE expense (id INT NOT NULL, category VARCHAR(255) DEFAULT NULL, description VARCHAR(255) DEFAULT NULL, spending DOUBLE PRECISION DEFAULT NULL, currency VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql(
+            'CREATE TABLE expense (id INT NOT NULL, category VARCHAR(255) DEFAULT NULL, description VARCHAR(255) DEFAULT NULL, spending DOUBLE PRECISION DEFAULT NULL, currency VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))'
+        );
     }
 
     public function down(Schema $schema): void

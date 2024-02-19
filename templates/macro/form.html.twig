@@ -1,0 +1,16 @@
+{% macro renderExpense(expense) %}
+    <div>
+        {{ expense.date }}
+        {{ expense.type }}
+        {{ expense.category }}
+        {{ expense.spending }}
+        {{ expense.description }}
+    </div>
+{% endmacro %}
+
+{% macro renderCategory(category) %}
+    <div>
+        {{ category.name }}
+        {{ category.description }}
+    </div>
+{% endmacro %}

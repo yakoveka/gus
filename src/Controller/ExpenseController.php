@@ -2,9 +2,14 @@
 
 namespace App\Controller;
 
+use App\Form\ExpenseType;
+use App\Repository\CategoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Expense;
@@ -21,29 +26,41 @@ class ExpenseController extends AbstractController
         ]);
     }
 
-    #[Route('/expenses', name: 'expense_index', methods: ['get'])]
-    public function index(ManagerRegistry $doctrine): JsonResponse
-    {
+    #[Route('/expenses', name: 'expense_index')]
+    public function index(
+        ManagerRegistry $doctrine,
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $expenses = $doctrine
-            ->getRepository(Expense::class)
-            ->findAll();
 
-        $data = [];
+        $user = $this->getUser();
+        $userId = $user->getId();
 
-        foreach ($expenses as $expense) {
-            $data[] = [
-                'id' => $expense->getId(),
-                'category' => $expense->getCategory(),
-                'description' => $expense->getDescription(),
-                'spending' => $expense->getSpending(),
-                'currency' => $expense->getCurrency(),
-                'date' => $expense->getDate(),
-                'changed' => false,
-            ];
+        $major = CategoryRepository::prepareCategories($doctrine, 'major', $userId);
+        $home = CategoryRepository::prepareCategories($doctrine, 'home', $userId);
+        $daily = CategoryRepository::prepareCategories($doctrine, 'daily', $userId);
+
+        $expense = new Expense();
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $form = $this->createForm(ExpenseType::class, $expense);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $expense = $form->getData();
+            $expense->setUserId($userId);
+
+            $entityManager->persist($expense);
+            $entityManager->flush();
         }
 
-        return $this->json($data);
+        return $this->render(
+            'expense/list.html.twig',
+            ['form' => $form, 'daily' => $daily, 'major' => $major, 'home' => $home, 'userId' => $userId]
+        );
     }
 
 //    #[Route('/expenses', name: 'expense_create', methods: ['post'])]

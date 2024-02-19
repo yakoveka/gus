@@ -1,0 +1,63 @@
+{% import "macro/form.html.twig" as forms %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Daily</h2>
+    {% for expense in daily %}
+        {{ forms.renderExpense(expense) }}
+    {% endfor %}
+    <h2>Home</h2>
+    {% for expense in home %}
+        {{ forms.renderExpense(expense) }}
+    {% endfor %}
+    <h2>Major</h2>
+    {% for expense in major %}
+        {{ forms.renderExpense(expense) }}
+    {% endfor %}
+    {{ form_start(form, { attr: { id: 'expense_form' } }) }}
+    {{ form_row(form.date) }}
+    {{ form_row(form.type) }}
+    {{ form_row(form.category) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.spending) }}
+    {{ form_end(form) }}
+    <div id="user-id" style="display: none">{{ userId }}</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const form = document.getElementById('expense_form');
+            const form_select_type = document.getElementById('expense_type');
+            const form_select_category = document.getElementById('expense_category');
+            const userId = document.getElementById('user-id').innerText;
+
+            const updateForm = async (data) => {
+                const req = await fetch('/categories-by-type', {
+                    method: 'post',
+                    body: data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'charset': 'utf-8'
+                    }
+                });
+
+                const text = await req.text()
+                return JSON.parse(text);
+            };
+
+            const parseTextToHtml = (text) => {
+                const parser = new DOMParser();
+                return parser.parseFromString(text, 'text/html');
+            };
+
+            const changeOptions = async (e) => {
+                const updateFormResponse = await updateForm(JSON.stringify({type: e.target.value, userId}));
+                form_select_category.innerHTML = updateFormResponse.map((e) => '<option value="' + e + '">' + e + '</option>').join('');
+            };
+
+            form_select_type.addEventListener('change', (e) => changeOptions(e));
+        });
+    </script>
+{% endblock %}

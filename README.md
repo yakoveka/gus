@@ -1,11 +1,6 @@
-### Build 
+### Build and run
 ```
-docker compose build --no-cache
-```
-
-### Run
-```
-docker compose up --pull --wait
+docker compose up --build --wait -d
 ```
 
 ### Stop
@@ -13,9 +8,13 @@ docker compose up --pull --wait
 docker compose down --remove-orphans
 ```
 
-### PHPMyAdmin
-http://localhost:8080
+### Postgresql
+```
+psql gus
+```
 
-user: admin
-
-password: password
+### Working Pages
+```
+/expenses
+/categories
+```

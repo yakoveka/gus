@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +17,12 @@ use Doctrine\Persistence\ManagerRegistry;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(ManagerRegistry $doctrine, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        ManagerRegistry $doctrine,
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -32,7 +38,20 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
-            // do anything else you need here, like send an email
+
+            foreach (CategoryRepository::getDefaultCategories() as $type => $categories) {
+                foreach ($categories as $category) {
+                    $cat = new Category();
+                    $cat
+                        ->setType($type)
+                        ->setDescription($category['description'] ?? '')
+                        ->setName($category['name'] ?? '')
+                        ->setUserId($user->getId());
+
+                    $entityManager->persist($cat);
+                    $entityManager->flush();
+                }
+            }
 
             return $this->redirectToRoute('expense_index');
         }
