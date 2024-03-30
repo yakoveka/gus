@@ -1,16 +1,56 @@
 {% macro renderExpense(expense) %}
-    <div>
+    <div class="expense">
         {{ expense.date }}
         {{ expense.type }}
-        {{ expense.category }}
+        {{ expense.categoryId }}
         {{ expense.spending }}
         {{ expense.description }}
+        <a href="/expenses/{{ expense.id }}">Edit</a>
     </div>
 {% endmacro %}
 
 {% macro renderCategory(category) %}
-    <div>
+    <div class="category">
         {{ category.name }}
         {{ category.description }}
+        <div id="user-id" style="display: none">{{ category.id }}</div>
     </div>
+{% endmacro %}
+
+
+{% macro categoriesJS() %}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const form = document.getElementById('expense_form');
+            const form_select_type = document.getElementById('expense_type');
+            const form_select_category = document.getElementById('expense_categoryId');
+            const userId = document.getElementById('user-id').innerText;
+
+            const updateForm = async (data) => {
+                const req = await fetch('/categories-by-type', {
+                    method: 'post',
+                    body: data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'charset': 'utf-8'
+                    }
+                });
+
+                const text = await req.text()
+                return JSON.parse(text);
+            };
+
+            const parseTextToHtml = (text) => {
+                const parser = new DOMParser();
+                return parser.parseFromString(text, 'text/html');
+            };
+
+            const changeOptions = async (e) => {
+                const updateFormResponse = await updateForm(JSON.stringify({type: e.target.value, userId}));
+                form_select_category.innerHTML = updateFormResponse.map((e) => '<option value="' + e.id + '">' + e.name + '</option>').join('');
+            };
+
+            form_select_type.addEventListener('change', (e) => changeOptions(e));
+        });
+    </script>
 {% endmacro %}

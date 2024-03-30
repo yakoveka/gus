@@ -21,28 +21,28 @@ class ExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, Expense::class);
     }
 
-//    /**
-//     * @return Expense[] Returns an array of Expense objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public static function prepareExpensesByDate(
+        ManagerRegistry $doctrine,
+        string $type,
+        int $userId,
+        string $date
+    ): array {
+        return array_map(
+            self::prepareExpense(...),
+            $doctrine->getRepository(Expense::class)->findBy(['type' => $type, 'userId' => $userId, 'date' => $date])
+        );
+    }
 
-//    public function findOneBySomeField($value): ?Expense
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    private static function prepareExpense(Expense $expense): array
+    {
+        return
+            [
+                'id' => $expense->getId(),
+                'date' => $expense->getDate(),
+                'type' => $expense->getType(),
+                'description' => $expense->getDescription(),
+                'categoryId' => $expense->getCategoryId(),
+                'spending' => $expense->getSpending(),
+            ];
+    }
 }
