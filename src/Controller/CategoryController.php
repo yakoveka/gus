@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryType;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,8 +20,6 @@ class CategoryController extends AbstractController
     public function categoriesByType(
         ManagerRegistry $doctrine,
         Request $request,
-        UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager
     ): JsonResponse {
         $body = json_decode($request->getContent());
 
@@ -28,14 +27,13 @@ class CategoryController extends AbstractController
             ['type' => $body->type, 'userId' => $body->userId]
         );
 
-        return $this->json(array_map(fn($cat) => $cat->getName(), $categories));
+        return $this->json(array_map(fn($cat) => ['name' => $cat->getName(), 'id' => $cat->getId()], $categories));
     }
 
     #[Route('/categories', name: 'categories_index')]
     public function list(
         ManagerRegistry $doctrine,
         Request $request,
-        UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -43,18 +41,9 @@ class CategoryController extends AbstractController
         $user = $this->getUser();
         $userId = $user->getId();
 
-        $major = array_map(
-            fn($cat) => ['name' => $cat->getName(), 'type' => $cat->getType(), 'description' => $cat->getDescription()],
-            $doctrine->getRepository(Category::class)->findBy(['type' => 'major', 'userId' => $userId])
-        );
-        $home = array_map(
-            fn($cat) => ['name' => $cat->getName(), 'type' => $cat->getType(), 'description' => $cat->getDescription()],
-            $doctrine->getRepository(Category::class)->findBy(['type' => 'home', 'userId' => $userId])
-        );
-        $daily = array_map(
-            fn($cat) => ['name' => $cat->getName(), 'type' => $cat->getType(), 'description' => $cat->getDescription()],
-            $doctrine->getRepository(Category::class)->findBy(['type' => 'daily', 'userId' => $userId])
-        );
+        $major = CategoryRepository::prepareCategoriesByType('major', $doctrine, $userId);
+        $home = CategoryRepository::prepareCategoriesByType('home', $doctrine, $userId);
+        $daily = CategoryRepository::prepareCategoriesByType('daily', $doctrine, $userId);
 
         $category = new Category();
         $this->denyAccessUnlessGranted('ROLE_USER');

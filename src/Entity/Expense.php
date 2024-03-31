@@ -13,8 +13,8 @@ class Expense
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $category = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $categoryId = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
@@ -39,14 +39,14 @@ class Expense
         return $this->id;
     }
 
-    public function getCategory(): ?string
+    public function getCategoryId(): ?int
     {
-        return $this->category;
+        return $this->categoryId;
     }
 
-    public function setCategory(?string $category): static
+    public function setCategoryId(?int $categoryId): static
     {
-        $this->category = $category;
+        $this->categoryId = $categoryId;
 
         return $this;
     }

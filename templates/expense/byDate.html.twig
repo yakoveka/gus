@@ -1,0 +1,22 @@
+{% import "macro/form.html.twig" as forms %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <a href="/expenses">Back to form</a>
+    {{ form_start(form) }}
+    {{ form_row(form.date) }}
+    {{ form_end(form) }}
+    <h2>Daily</h2>
+    {% for expense in daily %}
+        {{ forms.renderExpense(expense) }}
+    {% endfor %}
+    <h2>Home</h2>
+    {% for expense in home %}
+        {{ forms.renderExpense(expense) }}
+    {% endfor %}
+    <h2>Major</h2>
+    {% for expense in major %}
+        {{ forms.renderExpense(expense) }}
+    {% endfor %}
+{% endblock %}

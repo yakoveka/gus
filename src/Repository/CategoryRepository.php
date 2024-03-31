@@ -130,42 +130,16 @@ class CategoryRepository extends ServiceEntityRepository
         ];
     }
 
-    public static function prepareCategories(ManagerRegistry $doctrine, string $type, int $userId): array
+    public static function prepareCategoriesByType(string $type, ManagerRegistry $doctrine, int $userId): array
     {
         return array_map(
             fn($cat) => [
-                'date' => $cat->getCategory(),
+                'name' => $cat->getName(),
                 'type' => $cat->getType(),
                 'description' => $cat->getDescription(),
-                'category' => $cat->getCategory(),
-                'spending' => $cat->getSpending(),
+                'id' => $cat->getId()
             ],
-            $doctrine->getRepository(Expense::class)->findBy(['type' => $type, 'userId' => $userId])
+            $doctrine->getRepository(Category::class)->findBy(['type' => $type, 'userId' => $userId])
         );
     }
-
-//    /**
-//     * @return Category[] Returns an array of Category objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Category
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

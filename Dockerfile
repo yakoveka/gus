@@ -25,6 +25,7 @@ RUN apk add --no-cache \
 		gettext \
 		git \
 	;
+RUN apk add --update nodejs npm
 
 # php extensions installer: https://github.com/mlocati/docker-php-extension-installer
 COPY --from=php_extension_installer_upstream --link /usr/bin/install-php-extensions /usr/local/bin/
