@@ -4,14 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryType;
-use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CategoryController extends AbstractController
@@ -41,9 +39,9 @@ class CategoryController extends AbstractController
         $user = $this->getUser();
         $userId = $user->getId();
 
-        $major = CategoryRepository::prepareCategoriesByType('major', $doctrine, $userId);
-        $home = CategoryRepository::prepareCategoriesByType('home', $doctrine, $userId);
-        $daily = CategoryRepository::prepareCategoriesByType('daily', $doctrine, $userId);
+        $major = $doctrine->getRepository(Category::class)->prepareCategoriesByType('major', $userId);
+        $home = $doctrine->getRepository(Category::class)->prepareCategoriesByType('home', $userId);
+        $daily = $doctrine->getRepository(Category::class)->prepareCategoriesByType('daily', $userId);
 
         $category = new Category();
         $this->denyAccessUnlessGranted('ROLE_USER');

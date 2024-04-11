@@ -7,12 +7,18 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+/**
+ * Form type to handle categories in categories list.
+ * /categories
+ */
 class CategoryType extends AbstractType
 {
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -29,6 +35,9 @@ class CategoryType extends AbstractType
             ->getForm();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

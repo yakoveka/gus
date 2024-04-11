@@ -27,6 +27,9 @@ class ExpenseType extends AbstractType
     ) {
     }
 
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $user = $this->security->getUser();
@@ -53,7 +56,7 @@ class ExpenseType extends AbstractType
                     'Home' => 'home',
                 ]
             ])
-            ->add('categoryId', ChoiceType::class, ['choices' => $choices, 'constraints' => [], 'mapped' => false])
+            ->add('categoryId', ChoiceType::class, ['choices' => $choices])
             ->add('description', TextType::class)
             ->add('spending', NumberType::class, [
                 'constraints' => [
@@ -80,6 +83,9 @@ class ExpenseType extends AbstractType
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

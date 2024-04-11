@@ -3,21 +3,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <a href="/expenses-by-date">Go to all expenses filtered by date</a>
     <h1>Today's expenses</h1>
-    <h2>Daily</h2>
-    {% for expense in daily %}
-        {{ forms.renderExpense(expense) }}
-    {% endfor %}
-    <h2>Home</h2>
-    {% for expense in home %}
-        {{ forms.renderExpense(expense) }}
-    {% endfor %}
-    <h2>Major</h2>
-    {% for expense in major %}
-        {{ forms.renderExpense(expense) }}
-    {% endfor %}
-    {{ form_start(form, { attr: { id: 'expense_form' } }) }}
+    {{ forms.renderInfo() }}
+    {{ forms.renderExpensesArray(daily) }}
+    {{ forms.renderExpensesArray(home) }}
+    {{ forms.renderExpensesArray(major) }}
+    {{ form_start(form, { attr: { id: 'expense_form', class: 'flex justify-center mt-5' } }) }}
     {{ form_row(form.date) }}
     {{ form_row(form.type) }}
     {{ form_row(form.categoryId) }}

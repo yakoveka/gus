@@ -10,6 +10,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bundle\SecurityBundle\Security;
 
+/**
+ * Form type to get all expenses by day.
+ * /expenses-by-date
+ */
 class DayType extends AbstractType
 {
     public function __construct(
@@ -17,6 +21,9 @@ class DayType extends AbstractType
     ) {
     }
 
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $user = $this->security->getUser();
@@ -35,6 +42,9 @@ class DayType extends AbstractType
             ])->add('save', SubmitType::class, ['label' => 'Go to selected date']);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
