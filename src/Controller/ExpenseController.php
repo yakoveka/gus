@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Form\DayType;
 use App\Form\ExpenseType;
-use App\Repository\ExpenseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,9 +42,9 @@ class ExpenseController extends AbstractController
 
         $date = date("Y-m-d");
 
-        $major = ExpenseRepository::prepareExpensesByDate($doctrine, 'major', $userId, $date);
-        $home = ExpenseRepository::prepareExpensesByDate($doctrine, 'home', $userId, $date);
-        $daily = ExpenseRepository::prepareExpensesByDate($doctrine, 'daily', $userId, $date);
+        $major = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('major', $userId, $date);
+        $home = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('home', $userId, $date);
+        $daily = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('daily', $userId, $date);
 
         $expense = new Expense();
 
@@ -91,9 +91,9 @@ class ExpenseController extends AbstractController
         $user = $this->getUser();
         $userId = $user->getId();
 
-        $major = ExpenseRepository::prepareExpensesByDate($doctrine, 'major', $userId, $date);
-        $home = ExpenseRepository::prepareExpensesByDate($doctrine, 'home', $userId, $date);
-        $daily = ExpenseRepository::prepareExpensesByDate($doctrine, 'daily', $userId, $date);
+        $major = $doctrine->getRepository(Expense::class)->prepareExpensesByDate('major', $userId, $date);
+        $home = $doctrine->getRepository(Expense::class)->prepareExpensesByDate('home', $userId, $date);
+        $daily = $doctrine->getRepository(Expense::class)->prepareExpensesByDate('daily', $userId, $date);
 
         $form = $this->createForm(DayType::class, ['date' => $date]);
         $form->handleRequest($request);
@@ -112,6 +112,33 @@ class ExpenseController extends AbstractController
             'expense/byDate.html.twig',
             ['daily' => $daily, 'major' => $major, 'home' => $home, 'userId' => $userId, 'form' => $form]
         );
+    }
+
+    #[Route('/expenses/api', name: 'expense_api')]
+    public function expensesApi(
+        ManagerRegistry $doctrine,
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $parameters = json_decode($request->getContent(), true);
+
+        $expenses = $entityManager->getRepository(Expense::class)->findBy(['userId' => $parameters['userId']]);
+
+        $expenses = array_map(function ($expense) use ($doctrine) {
+            return [
+                'id' => $expense->getId(),
+                'date' => $expense->getDate(),
+                'type' => $expense->getType(),
+                'description' => $expense->getDescription(),
+                'categoryId' => $doctrine->getRepository(Category::class)->find(
+                    $expense->getCategoryId()
+                )->getName(),
+                'spending' => $expense->getSpending(),
+            ];
+        }, $expenses);
+
+        return $this->json(json_encode($expenses));
     }
 
     #[Route('/expenses/{id}', name: 'expense_update', methods: ['get'])]

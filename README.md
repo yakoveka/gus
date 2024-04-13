@@ -18,3 +18,9 @@ psql gus
 /expenses
 /categories
 ```
+
+### Tailwind
+Execute following in php container locally:
+```
+npm run watch 
+```

@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Category;
-use App\Entity\Expense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,6 +21,11 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
+    /**
+     * Default categories that user has after account creation.
+     *
+     * @return array[]
+     */
     public static function getDefaultCategories(): array
     {
         return [
@@ -130,7 +134,7 @@ class CategoryRepository extends ServiceEntityRepository
         ];
     }
 
-    public static function prepareCategoriesByType(string $type, ManagerRegistry $doctrine, int $userId): array
+    public function prepareCategoriesByType(string $type, int $userId): array
     {
         return array_map(
             fn($cat) => [
@@ -139,7 +143,7 @@ class CategoryRepository extends ServiceEntityRepository
                 'description' => $cat->getDescription(),
                 'id' => $cat->getId()
             ],
-            $doctrine->getRepository(Category::class)->findBy(['type' => $type, 'userId' => $userId])
+            $this->getEntityManager()->getRepository(Category::class)->findBy(['type' => $type, 'userId' => $userId])
         );
     }
 }

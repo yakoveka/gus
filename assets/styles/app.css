@@ -1,7 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind variants;
 
-body {
-    background-color: lightgray;
+a {
+    text-decoration: underline;
+    &:hover {
+        color: darkblue;
+    }
+}
+
+#expense_form {
+
 }

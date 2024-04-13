@@ -14,8 +14,13 @@
     {% endblock %}
 </head>
 <body>
-<div class="container" style="max-width: 1000px; margin: auto">
-    {% block body %}{% endblock %}
+<div class="container">
+    {% block header %}
+        {% include 'header/header.html.twig' %}
+    {% endblock %}
+    <div class="main-content py-10">
+        {% block body %}{% endblock %}
+    </div>
 </div>
 </body>
 </html>

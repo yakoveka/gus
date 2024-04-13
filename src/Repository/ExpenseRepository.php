@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\Expense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,23 +17,42 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ExpenseRepository extends ServiceEntityRepository
 {
+    /**
+     * @inheritdoc
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Expense::class);
     }
 
-    public static function prepareExpensesByDate(
-        ManagerRegistry $doctrine,
-        string $type,
-        int $userId,
-        string $date
-    ): array {
+    public function prepareExpensesByDate(string $type, int $userId, string $date): array
+    {
+        $doctrine = $this->getEntityManager();
+
         return array_map(
-            self::prepareExpense(...),
+            function ($expense) use ($doctrine) {
+                return [
+                    'id' => $expense->getId(),
+                    'date' => $expense->getDate(),
+                    'type' => $expense->getType(),
+                    'description' => $expense->getDescription(),
+                    'categoryId' => $doctrine->getRepository(Category::class)->find(
+                        $expense->getCategoryId()
+                    )->getName(),
+                    'spending' => $expense->getSpending(),
+                ];
+            },
             $doctrine->getRepository(Expense::class)->findBy(['type' => $type, 'userId' => $userId, 'date' => $date])
         );
     }
 
+    /**
+     * Handy function to prepare expenses inside the array_map function.
+     * Currently unused.
+     *
+     * @param Expense $expense
+     * @return array
+     */
     private static function prepareExpense(Expense $expense): array
     {
         return

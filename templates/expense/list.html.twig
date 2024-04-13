@@ -3,26 +3,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <a href="/expenses-by-date">Go to all expenses filtered by date</a>
     <h1>Today's expenses</h1>
-    <h2>Daily</h2>
-    {% for expense in daily %}
-        {{ forms.renderExpense(expense) }}
-    {% endfor %}
-    <h2>Home</h2>
-    {% for expense in home %}
-        {{ forms.renderExpense(expense) }}
-    {% endfor %}
-    <h2>Major</h2>
-    {% for expense in major %}
-        {{ forms.renderExpense(expense) }}
-    {% endfor %}
-    {{ form_start(form, { attr: { id: 'expense_form' } }) }}
-    {{ form_row(form.date) }}
-    {{ form_row(form.type) }}
-    {{ form_row(form.categoryId) }}
-    {{ form_row(form.description) }}
-    {{ form_row(form.spending) }}
+    {{ forms.renderInfo() }}
+    {{ forms.renderExpensesArray(daily) }}
+    {{ forms.renderExpensesArray(home) }}
+    {{ forms.renderExpensesArray(major) }}
+    {{ form_start(form, { attr: { id: 'expense_form', class: 'flex justify-center mt-10' } }) }}
+    {{ form_row(form.date, {attr: {class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}}) }}
+    {{ form_row(form.type, {attr: {class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}}) }}
+    {{ form_row(form.categoryId, {attr: {class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}}) }}
+    {{ form_row(form.description, {attr: {placeholder: "Description", class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}}) }}
+    {{ form_row(form.spending, {attr: {placeholder: "100", class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}}) }}
     {{ form_end(form) }}
     <div id="user-id" style="display: none">{{ userId }}</div>
 {% endblock %}

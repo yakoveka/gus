@@ -1,11 +1,30 @@
 {% macro renderExpense(expense) %}
-    <div class="expense">
-        {{ expense.date }}
-        {{ expense.type }}
-        {{ expense.categoryId }}
-        {{ expense.spending }}
-        {{ expense.description }}
+    <div class="expense-item columns-6">
+        <div class="date">{{ expense.date }}</div>
+        <div class="type">{{ expense.type }}</div>
+        <div class="category">{{ expense.categoryId }}</div>
+        <div class="spending">{{ expense.spending }}</div>
+        <div class="description">{{ expense.description }}</div>
         <a href="/expenses/{{ expense.id }}">Edit</a>
+    </div>
+{% endmacro %}
+
+{% macro renderInfo() %}
+    <div class="columns-6">
+        <div>Date</div>
+        <div>Type</div>
+        <div>Category</div>
+        <div>Spending</div>
+        <div>Description</div>
+        <div>Edit link</div>
+    </div>
+{% endmacro %}
+
+{% macro renderExpensesArray(expenses) %}
+    <div class="expenses-array">
+        {% for expense in expenses %}
+            {{ _self.renderExpense(expense) }}
+        {% endfor %}
     </div>
 {% endmacro %}
 
