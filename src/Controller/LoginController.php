@@ -2,8 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -27,5 +32,25 @@ class LoginController extends AbstractController
         throw new \LogicException(
             'This method can be blank - it will be intercepted by the logout key on your firewall.'
         );
+    }
+
+    #[Route(path: '/login/api', name: 'login_api')]
+    public function loginApi(
+        Request $request,
+        ManagerRegistry $doctrine,
+        UserPasswordHasherInterface $userPasswordHasher
+    ): JsonResponse {
+        $parameters = json_decode($request->getContent(), true);
+
+        $user = $doctrine->getRepository(User::class)->findOneBy(['email' => $parameters['email']]);
+
+        if (!$user) {
+            return $this->json('Invalid credentials for user ' . $parameters['email'], 401);
+        }
+
+        return $userPasswordHasher->isPasswordValid(
+            $user,
+            $parameters['password']
+        ) ? $this->json($user->getId()) : $this->json('Invalid credentials for user ' . $parameters['email'], 401);
     }
 }

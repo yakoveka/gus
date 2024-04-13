@@ -48,16 +48,18 @@ class ExpenseType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'input' => 'string',
+                'label_attr' => ['class' => 'hidden']
             ])
             ->add('type', ChoiceType::class, [
                 'choices' => [
                     'Daily' => 'daily',
                     'Major' => 'major',
                     'Home' => 'home',
-                ]
+                ],
+                'label_attr' => ['class' => 'hidden']
             ])
-            ->add('categoryId', ChoiceType::class, ['choices' => $choices])
-            ->add('description', TextType::class)
+            ->add('categoryId', ChoiceType::class, ['choices' => $choices, 'label_attr' => ['class' => 'hidden']])
+            ->add('description', TextType::class, ['label_attr' => ['class' => 'hidden']])
             ->add('spending', NumberType::class, [
                 'constraints' => [
                     new NotBlank(),
@@ -66,8 +68,15 @@ class ExpenseType extends AbstractType
                         'message' => 'Invalid category selected.', // Custom error message
                     ]),
                 ],
+                'label_attr' => ['class' => 'hidden']
             ])
-            ->add('save', SubmitType::class, ['label' => $options['label']]);
+            ->add(
+                'save', SubmitType::class,
+                [
+                    'label' => $options['label'],
+                    'attr' => ['class' => 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800']
+                ]
+            );
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($userId) {
             $form = $event->getForm();
@@ -102,11 +111,12 @@ class ExpenseType extends AbstractType
      */
     private function getCategoriesChoicesByType(string $type, int $userId): array
     {
+        $doctrine = $this->managerRegistry;
         return array_merge(
             ...
             array_map(
                 fn($cat) => [$cat->getName() => $cat->getId()],
-                $this->managerRegistry->getRepository(Category::class)->findBy(
+                $doctrine->getRepository(Category::class)->findBy(
                     ['type' => $type, 'userId' => $userId]
                 )
             )

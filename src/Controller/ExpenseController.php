@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Form\DayType;
 use App\Form\ExpenseType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -111,6 +112,33 @@ class ExpenseController extends AbstractController
             'expense/byDate.html.twig',
             ['daily' => $daily, 'major' => $major, 'home' => $home, 'userId' => $userId, 'form' => $form]
         );
+    }
+
+    #[Route('/expenses/api', name: 'expense_api')]
+    public function expensesApi(
+        ManagerRegistry $doctrine,
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $parameters = json_decode($request->getContent(), true);
+
+        $expenses = $entityManager->getRepository(Expense::class)->findBy(['userId' => $parameters['userId']]);
+
+        $expenses = array_map(function ($expense) use ($doctrine) {
+            return [
+                'id' => $expense->getId(),
+                'date' => $expense->getDate(),
+                'type' => $expense->getType(),
+                'description' => $expense->getDescription(),
+                'categoryId' => $doctrine->getRepository(Category::class)->find(
+                    $expense->getCategoryId()
+                )->getName(),
+                'spending' => $expense->getSpending(),
+            ];
+        }, $expenses);
+
+        return $this->json(json_encode($expenses));
     }
 
     #[Route('/expenses/{id}', name: 'expense_update', methods: ['get'])]
