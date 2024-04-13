@@ -17,7 +17,7 @@ class Category
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private ?array $children = null;
 
     #[ORM\Column(length: 100)]
