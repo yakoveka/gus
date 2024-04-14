@@ -42,15 +42,15 @@ class LoginController extends AbstractController
     ): JsonResponse {
         $parameters = json_decode($request->getContent(), true);
 
-        $user = $doctrine->getRepository(User::class)->findOneBy(['email' => $parameters['email']]);
+        $user = $doctrine->getRepository(User::class)->findOneBy(['username' => $parameters['username']]);
 
         if (!$user) {
-            return $this->json('Invalid credentials for user ' . $parameters['email'], 401);
+            return $this->json('Invalid credentials for user ' . $parameters['username'], 401);
         }
 
         return $userPasswordHasher->isPasswordValid(
             $user,
             $parameters['password']
-        ) ? $this->json($user->getId()) : $this->json('Invalid credentials for user ' . $parameters['email'], 401);
+        ) ? $this->json($user->getId()) : $this->json('Invalid credentials for user ' . $parameters['username'], 401);
     }
 }

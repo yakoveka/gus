@@ -35,6 +35,15 @@ class RegistrationController extends AbstractController
                 )
             );
 
+            $duplicateUser = $entityManager->getRepository(User::class)->findOneBy(['username' => $user->getUsername()]);
+
+            if ($duplicateUser) {
+                return $this->render('registration/register.html.twig', [
+                    'error' => 'Such username already exists, please choose another.',
+                    'registrationForm' => $form->createView(),
+                ]);
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -57,6 +66,7 @@ class RegistrationController extends AbstractController
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'error' => ''
         ]);
     }
 }
