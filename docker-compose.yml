@@ -15,38 +15,18 @@ services:
             - gus
             # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
             # - ./docker/db/data:/var/lib/postgresql/data:rw
-    ###< doctrine/doctrine-bundle ###
-#    phppgadmin:
-#        restart: always
-#        image: dockage/phppgadmin:latest
-#        ports:
-#            - 5433:5432
-#        networks:
-#            - gus
-#        environment:
-#            PHP_PG_ADMIN_SERVER_HOST: database
-#            PHP_PG_ADMIN_SERVER_PORT: 5432
-#            PHP_PG_ADMIN_SERVER_DEFAULT_DB: postgres
-#        depends_on:
-#            - database
-#    pgadmin:
-#        restart: always
-#        image: dpage/pgadmin4:latest
-#        ports:
-#            -   80
-#        environment:
-#            PGADMIN_DEFAULT_EMAIL: "test@test.com"
-#            PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-#        networks:
-#            - gus
     php:
         image: ${IMAGES_PREFIX:-}app-php
+        build:
+            context: .
+            target: php_prod
         restart: unless-stopped
         volumes:
             - php_socket:/var/run/php
         networks:
             - gus
         environment:
+            APP_SECRET: ${APP_SECRET}
             TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
             TRUSTED_HOSTS: ^${SERVER_NAME:-example\.com|localhost}$$
             # The two next lines can be removed after initial installation
@@ -71,10 +51,6 @@ services:
         depends_on:
             - php
 
-# Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
-
 volumes:
     php_socket:
     database_data:
@@ -82,5 +58,3 @@ volumes:
 
 networks:
     gus:
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
