@@ -72,19 +72,19 @@ COPY --from=composer_upstream --link /composer /usr/bin/composer
 
 
 # Dev PHP image
-FROM php_base AS php_dev
-
-ENV APP_ENV=dev XDEBUG_MODE=off
-VOLUME /srv/app/var/
-
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-
-RUN set -eux; \
-	install-php-extensions \
-    	xdebug \
-    ;
-
-COPY --link docker/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
+#FROM php_base AS php_dev
+#
+#ENV APP_ENV=dev XDEBUG_MODE=off
+#VOLUME /srv/app/var/
+#
+#RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+#
+#RUN set -eux; \
+#	install-php-extensions \
+#    	xdebug \
+#    ;
+#
+#COPY --link docker/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
 
 # Prod PHP image
 FROM php_base AS php_prod
@@ -97,7 +97,8 @@ COPY --link docker/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
 # prevent the reinstallation of vendors at every changes in the source code
 COPY --link composer.* symfony.* ./
 RUN set -eux; \
-	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
+	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress \
+    npm install
 
 # copy sources
 COPY --link . ./

@@ -4,11 +4,16 @@ on:
       - main
 
 jobs:
-  deploy:
+  generate_env_file:
     runs-on: self-hosted
-    name: Deploy
+    name: Generate env file
     steps:
-      - uses: actions/checkout@v4
-      - run: |
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Generate env file
+        run: |
+          cp .env.example .env
+      - name: Restart docker compose
+        run: |
           docker compose down --remove-orphans
           docker compose up --build --wait -d
