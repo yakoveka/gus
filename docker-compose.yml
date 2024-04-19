@@ -23,6 +23,7 @@ services:
         restart: unless-stopped
         volumes:
             - php_socket:/var/run/php
+            - build_data:/srv/app/public
         networks:
             - gus
         environment:
@@ -40,7 +41,7 @@ services:
         image: nginx:latest
         volumes:
             - './docker/nginx:/etc/nginx/conf.d'
-            - './public:/var/www/gus/public'
+            - build_data:/srv/app/public
             - phppgadmin_data:/var/www/html/:ro
         ports:
             - "80:80"
@@ -55,6 +56,7 @@ volumes:
     php_socket:
     database_data:
     phppgadmin_data:
+    build_data:
 
 networks:
     gus:
