@@ -95,9 +95,11 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY --link docker/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
 
 # prevent the reinstallation of vendors at every changes in the source code
-COPY --link composer.* symfony.* ./
+COPY --link composer.* symfony.* package.* ./
 RUN set -eux; \
 	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
+
+RUN npm install
 
 # copy sources
 COPY --link . ./
@@ -109,3 +111,4 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync;
+RUN npm run build
