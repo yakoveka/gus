@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Expense
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "SEQUENCE")]
+    #[ORM\SequenceGenerator(sequenceName: "id", initialValue: 1)]
     #[ORM\Column]
     private ?int $id = null;
 

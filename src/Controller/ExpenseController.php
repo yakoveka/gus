@@ -42,10 +42,6 @@ class ExpenseController extends AbstractController
 
         $date = date("Y-m-d");
 
-        $major = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('major', $userId, $date);
-        $home = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('home', $userId, $date);
-        $daily = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('daily', $userId, $date);
-
         $expense = new Expense();
 
         $form = $this->createForm(ExpenseType::class, $expense, ['label' => 'Add expense']);
@@ -58,6 +54,10 @@ class ExpenseController extends AbstractController
             $entityManager->persist($expense);
             $entityManager->flush();
         }
+
+        $major = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('major', $userId, $date);
+        $home = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('home', $userId, $date);
+        $daily = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('daily', $userId, $date);
 
         return $this->render(
             'expense/list.html.twig',
