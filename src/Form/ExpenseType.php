@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Expense;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -59,7 +60,7 @@ class ExpenseType extends AbstractType
                 'label_attr' => ['class' => 'hidden']
             ])
             ->add('categoryId', ChoiceType::class, ['choices' => $choices, 'label_attr' => ['class' => 'hidden']])
-            ->add('description', TextType::class, ['label_attr' => ['class' => 'hidden']])
+            ->add('description', TextType::class, ['label_attr' => ['class' => 'hidden'], 'required' => false])
             ->add('spending', NumberType::class, [
                 'constraints' => [
                     new NotBlank(),
