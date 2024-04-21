@@ -30,3 +30,5 @@ yarn-error.log
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+docker-compose.override.yml

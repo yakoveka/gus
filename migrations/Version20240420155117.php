@@ -88,6 +88,6 @@ final class Version20240420155117 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql("DELETE FROM expense");
+        $this->addSql("DELETE FROM expense WHERE user_id = 1");
     }
 }
