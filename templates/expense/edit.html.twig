@@ -2,14 +2,16 @@
 
 {% extends 'base.html.twig' %}
 
+{% set inputCLasses = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' %}
+
 {% block body %}
     <a href="/expenses-by-date">Go to all expenses filtered by date</a>
-    {{ form_start(form, { attr: { id: 'expense_form' } }) }}
-    {{ form_row(form.date) }}
-    {{ form_row(form.type) }}
-    {{ form_row(form.categoryId) }}
-    {{ form_row(form.description) }}
-    {{ form_row(form.spending) }}
+    {{ form_start(form, { attr: { id: 'expense_form', class: 'flex justify-center' } }) }}
+    {{ form_row(form.date, {attr: {class: inputCLasses}}) }}
+    {{ form_row(form.type, {attr: {class: inputCLasses}}) }}
+    {{ form_row(form.categoryId, {attr: {class: inputCLasses}}) }}
+    {{ form_row(form.description, {attr: {placeholder: "Description", class: inputCLasses}}) }}
+    {{ form_row(form.spending, {attr: {class: inputCLasses}}) }}
     {{ form_end(form) }}
     <div id="user-id" style="display: none">{{ userId }}</div>
 {% endblock %}

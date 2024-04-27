@@ -43,6 +43,7 @@ class ExpenseController extends AbstractController
         $date = date("Y-m-d");
 
         $expense = new Expense();
+        $expense->setDate($date);
 
         $form = $this->createForm(ExpenseType::class, $expense, ['label' => 'Add expense']);
         $form->handleRequest($request);
@@ -53,21 +54,24 @@ class ExpenseController extends AbstractController
 
             $entityManager->persist($expense);
             $entityManager->flush();
+
+            unset($expense);
+            unset($form);
+
+            $expense = new Expense();
+            $expense->setDate($date);
+
+            $form = $this->createForm(ExpenseType::class, $expense, ['label' => 'Add expense']);
         }
 
-        $major = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('major', $userId, $date);
-        $home = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('home', $userId, $date);
-        $daily = $entityManager->getRepository(Expense::class)->prepareExpensesByDate('daily', $userId, $date);
+        $expenses = $entityManager->getRepository(Expense::class)->prepareExpensesByDate($userId, $date);
 
         return $this->render(
             'expense/list.html.twig',
             [
                 'form' => $form,
-                'daily' => $daily,
-                'major' => $major,
-                'home' => $home,
+                'expenses' => $expenses,
                 'userId' => $userId,
-                'date' => date("Y-m-d")
             ]
         );
     }
@@ -91,9 +95,7 @@ class ExpenseController extends AbstractController
         $user = $this->getUser();
         $userId = $user->getId();
 
-        $major = $doctrine->getRepository(Expense::class)->prepareExpensesByDate('major', $userId, $date);
-        $home = $doctrine->getRepository(Expense::class)->prepareExpensesByDate('home', $userId, $date);
-        $daily = $doctrine->getRepository(Expense::class)->prepareExpensesByDate('daily', $userId, $date);
+        $expenses = $doctrine->getRepository(Expense::class)->prepareExpensesByDate($userId, $date);
 
         $form = $this->createForm(DayType::class, ['date' => $date]);
         $form->handleRequest($request);
@@ -110,7 +112,7 @@ class ExpenseController extends AbstractController
 
         return $this->render(
             'expense/byDate.html.twig',
-            ['daily' => $daily, 'major' => $major, 'home' => $home, 'userId' => $userId, 'form' => $form]
+            ['expenses' => $expenses, 'userId' => $userId, 'form' => $form]
         );
     }
 

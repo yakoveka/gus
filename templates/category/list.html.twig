@@ -2,20 +2,26 @@
 
 {% extends 'base.html.twig' %}
 
+{% set inputCLasses = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' %}
+
 {% block body %}
-    <div>
-        <h2>Daily</h2>
+    <div class="categories-array mb-2">
+        <h2 class="text-2xl">Daily</h2>
         {% for category in daily %}
             {{ forms.renderCategory(category) }}
         {% endfor %}
-        <h2>Home</h2>
+        <h2 class="text-2xl mt-2">Home</h2>
         {% for category in home %}
             {{ forms.renderCategory(category) }}
         {% endfor %}
-        <h2>Major</h2>
+        <h2 class="text-2xl mt-2">Major</h2>
         {% for category in major %}
             {{ forms.renderCategory(category) }}
         {% endfor %}
     </div>
-    {{ form(form) }}
+    {{ form_start(form, { attr: {class: 'flex justify-center' } }) }}
+    {{ form_row(form.name, {attr: {placeholder: "Category Name", class: inputCLasses}}) }}
+    {{ form_row(form.type, {attr: {class: inputCLasses}}) }}
+    {{ form_row(form.description, {attr: {placeholder: "Description", class: inputCLasses}}) }}
+    {{ form_end(form) }}
 {% endblock %}
