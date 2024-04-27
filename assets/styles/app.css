@@ -3,6 +3,10 @@
 @tailwind utilities;
 @tailwind variants;
 
+body {
+    font-family: 'Roboto Mono';
+}
+
 a {
     text-decoration: underline;
     &:hover {
@@ -10,6 +14,18 @@ a {
     }
 }
 
-#expense_form {
+.expenses-array {
+    div:nth-child(2n) {
+        &.expense-item {
+            background-color: lightgray;
+        }
+    }
+}
 
+.categories-array {
+    div:nth-child(2n) {
+        &.category {
+            background-color: lightgray;
+        }
+    }
 }

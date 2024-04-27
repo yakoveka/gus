@@ -2,6 +2,8 @@
 
 {% block title %}Log in!{% endblock %}
 
+{% set inputCLasses = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' %}
+
 {% block body %}
     <div class="flex mt-20 flex-col items-center">
         {% if app.user %}
@@ -18,12 +20,12 @@
                 <a href="{{ path('app_register') }}" class="mb-3">Create account</a>
                 <label for="username">Username</label>
                 <input type="text" value="{{ last_username }}" name="_username" id="username"
-                       class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       class="form-control {{ inputCLasses }}"
                        placeholder="username"
                        autocomplete="username" required autofocus>
                 <label for="password">Password</label>
                 <input type="password" name="_password" id="password"
-                       class="form-control  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       class="form-control {{ inputCLasses }}"
                        autocomplete="current-password"
                        placeholder="***********"
                        required>

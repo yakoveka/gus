@@ -1,11 +1,19 @@
+{% set defaultFormClasses = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'%}
+
 {% macro renderExpense(expense) %}
-    <div class="expense-item columns-6">
-        <div class="date">{{ expense.date }}</div>
-        <div class="type">{{ expense.type }}</div>
-        <div class="category">{{ expense.categoryId }}</div>
-        <div class="spending">{{ expense.spending }}</div>
-        <div class="description">{{ expense.description }}</div>
-        <a href="/expenses/{{ expense.id }}">Edit</a>
+    <div class="expense-item table-row">
+        <div class="date table-cell">{{ expense.date }}</div>
+        <div class="type table-cell">{{ expense.type }}</div>
+        <div class="category table-cell">{{ expense.categoryId }}</div>
+        <div class="spending table-cell">{{ expense.spending }}</div>
+        <div class="description table-cell">
+            {% if expense.description %}
+                {{ expense.description }}
+            {% else %}
+                <div class="text-gray-400">Description</div>
+            {% endif %}
+        </div>
+        <a class="edit-link table-cell" href="/expenses/{{ expense.id }}">Edit</a>
     </div>
 {% endmacro %}
 
@@ -21,7 +29,7 @@
 {% endmacro %}
 
 {% macro renderExpensesArray(expenses) %}
-    <div class="expenses-array">
+    <div class="expenses-array text-2xl table w-full">
         {% for expense in expenses %}
             {{ _self.renderExpense(expense) }}
         {% endfor %}
@@ -29,9 +37,13 @@
 {% endmacro %}
 
 {% macro renderCategory(category) %}
-    <div class="category">
-        {{ category.name }}
-        {{ category.description }}
+    <div class="category flex flex-row">
+        <div class="name w-1/4">
+            {{ category.name }}
+        </div>
+        <div class="description">
+            {{ category.description }}
+        </div>
         <div id="user-id" style="display: none">{{ category.id }}</div>
     </div>
 {% endmacro %}

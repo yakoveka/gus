@@ -25,7 +25,7 @@ class ExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, Expense::class);
     }
 
-    public function prepareExpensesByDate(string $type, int $userId, string $date): array
+    public function prepareExpensesByDate(int $userId, string $date): array
     {
         $doctrine = $this->getEntityManager();
 
@@ -42,7 +42,7 @@ class ExpenseRepository extends ServiceEntityRepository
                     'spending' => $expense->getSpending(),
                 ];
             },
-            $doctrine->getRepository(Expense::class)->findBy(['type' => $type, 'userId' => $userId, 'date' => $date])
+            $doctrine->getRepository(Expense::class)->findBy(['userId' => $userId, 'date' => $date])
         );
     }
 
