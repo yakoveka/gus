@@ -6,7 +6,7 @@ on:
 jobs:
   generate_env_file:
     runs-on: self-hosted
-    name: Generate env file
+    name: Deploy
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -17,3 +17,6 @@ jobs:
         run: |
           docker compose down --remove-orphans
           docker compose up --build --wait -d
+      - name: Build styles
+        run: |
+          npm run build
