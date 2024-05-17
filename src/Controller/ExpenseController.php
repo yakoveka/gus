@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Form\DayType;
 use App\Form\ExpenseType;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -76,6 +77,9 @@ class ExpenseController extends AbstractController
         );
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/expenses-by-date', name: 'expense_by_date')]
     public function getExpensesByDate(
         #[MapQueryParameter] ?string $day,
@@ -102,6 +106,15 @@ class ExpenseController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $date = $form->get('date')->getData();
+
+            if ($form->get('next')->isClicked()) {
+                $date = new DateTime($date);
+                $date = $date->modify('+1 day')->format('Y-m-d');
+            } elseif ($form->get('previous')->isClicked()) {
+                $date = new DateTime($date);
+                $date = $date->modify('-1 day')->format('Y-m-d');
+            }
+
             $formattedDate = explode('-', $date);
 
             return $this->redirectToRoute(
