@@ -17,7 +17,7 @@ a {
 .expenses-array {
     div:nth-child(2n) {
         &.expense-item {
-            background-color: lightgray;
+            background-color: lightsteelblue;
         }
     }
 }
@@ -25,7 +25,7 @@ a {
 .categories-array {
     div:nth-child(2n) {
         &.category {
-            background-color: lightgray;
+            background-color: lightsteelblue;
         }
     }
 }
