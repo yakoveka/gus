@@ -19,4 +19,4 @@ jobs:
           docker compose up --build --wait -d
       - name: Build styles
         run: |
-          docker exec -it gus-php-1 sh -c "npm run build"
+          docker exec gus-php-1 sh -c "npm run build"
