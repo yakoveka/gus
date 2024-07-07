@@ -155,7 +155,7 @@ class ExpenseController extends AbstractController
             $categoryId = $category->getId();
         }
 
-        $expenses = $doctrine->getRepository(Expense::class)->prepareExpensesByCategoryId($userId, $type, $categoryId);
+        $expenses = array_reverse($doctrine->getRepository(Expense::class)->prepareExpensesByCategoryId($userId, $type, $categoryId));
 
         $form = $this->createForm(CategorySearchType::class, ['type' => $type, 'categoryId' => $categoryId]);
         $form->handleRequest($request);
