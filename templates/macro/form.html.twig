@@ -14,6 +14,7 @@
             {% endif %}
         </div>
         <a class="edit-link table-cell" href="/expenses/{{ expense.id }}">Edit</a>
+        <a class="delete-link table-cell" href="/expenses/delete/{{ expense.id }}" onclick="return confirm('Are you sure that ypu want to delete this expense?')">Delete</a>
     </div>
 {% endmacro %}
 
@@ -49,12 +50,12 @@
 {% endmacro %}
 
 
-{% macro categoriesJS() %}
+{% macro categoriesJS(formId, typeId, categoryId) %}
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            const form = document.getElementById('expense_form');
-            const form_select_type = document.getElementById('expense_type');
-            const form_select_category = document.getElementById('expense_categoryId');
+            const form = document.getElementById('{{formId}}');
+            const form_select_type = document.getElementById('{{typeId}}');
+            const form_select_category = document.getElementById('{{categoryId}}');
             const userId = document.getElementById('user-id').innerText;
 
             const updateForm = async (data) => {

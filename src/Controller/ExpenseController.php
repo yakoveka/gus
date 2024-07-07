@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Form\CategorySearchType;
 use App\Form\DayType;
 use App\Form\ExpenseType;
 use DateTime;
@@ -129,6 +130,52 @@ class ExpenseController extends AbstractController
         );
     }
 
+    /**
+     * @throws \Exception
+     */
+    #[Route('/expenses-by-category', name: 'expense_by_category')]
+    public function getExpensesByCategory(
+        #[MapQueryParameter] ?string $type,
+        #[MapQueryParameter] ?int $categoryId,
+        ManagerRegistry $doctrine,
+        Request $request,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $user = $this->getUser();
+        $userId = $user->getId();
+
+        if (!$type) {
+            $type = 'daily';
+        }
+
+        if (!$categoryId) {
+            $categories = $doctrine->getRepository(Category::class)->findBy(['userId' => $userId, 'type' => $type]);
+            $category = reset($categories);
+            $categoryId = $category->getId();
+        }
+
+        $expenses = $doctrine->getRepository(Expense::class)->prepareExpensesByCategoryId($userId, $type, $categoryId);
+
+        $form = $this->createForm(CategorySearchType::class, ['type' => $type, 'categoryId' => $categoryId]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $type = $form->get('type')->getData();
+            $categoryId = $form->get('categoryId')->getData();
+
+            return $this->redirectToRoute(
+                'expense_by_category',
+                ['type' => $type, 'categoryId' => $categoryId]
+            );
+        }
+
+        return $this->render(
+            'expense/byCategory.html.twig',
+            ['expenses' => $expenses, 'userId' => $userId, 'form' => $form]
+        );
+    }
+
     #[Route('/expenses/api', name: 'expense_api')]
     public function expensesApi(
         ManagerRegistry $doctrine,
@@ -186,22 +233,26 @@ class ExpenseController extends AbstractController
             }
         }
 
-        return $this->render('expense/edit.html.twig', ['expense' => $expense, 'form' => $form, 'userId' => $userId]);
+        $route = $request->headers->get('referer');
+
+        return $this->render('expense/edit.html.twig', ['expense' => $expense, 'form' => $form, 'userId' => $userId, 'backLink' => $route]);
     }
 
-//    #[Route('/expenses/{id}', name: 'expense_delete', methods: ['delete'])]
-//    public function delete(ManagerRegistry $doctrine, int $id): JsonResponse
-//    {
-//        $entityManager = $doctrine->getManager();
-//        $expense = $entityManager->getRepository(Expense::class)->find($id);
-//
-//        if (!$expense) {
-//            return $this->json('No expense found for id' . $id, 404);
-//        }
-//
-//        $entityManager->remove($expense);
-//        $entityManager->flush();
-//
-//        return $this->json('Deleted a expense successfully with id ' . $id);
-//    }
+    #[Route('/expenses/delete/{id}', name: 'expense_delete', methods: ['get'])]
+    public function delete(ManagerRegistry $doctrine, Request $request, int $id): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $expense = $entityManager->getRepository(Expense::class)->find($id);
+
+        if (!$expense) {
+            return $this->render('No expense found for id' . $id);
+        }
+
+        $entityManager->remove($expense);
+        $entityManager->flush();
+
+        $route = $request->headers->get('referer');
+
+        return $this->redirect($route);
+    }
 }

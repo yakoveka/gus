@@ -46,6 +46,27 @@ class ExpenseRepository extends ServiceEntityRepository
         );
     }
 
+    public function prepareExpensesByCategoryId(int $userId, string $type, int $categoryId): array
+    {
+        $doctrine = $this->getEntityManager();
+
+        return array_map(
+            function ($expense) use ($doctrine) {
+                return [
+                    'id' => $expense->getId(),
+                    'date' => $expense->getDate(),
+                    'type' => $expense->getType(),
+                    'description' => $expense->getDescription(),
+                    'categoryId' => $doctrine->getRepository(Category::class)->find(
+                        $expense->getCategoryId()
+                    )->getName(),
+                    'spending' => $expense->getSpending(),
+                ];
+            },
+            $doctrine->getRepository(Expense::class)->findBy(['userId' => $userId, 'type' => $type, 'categoryId' => $categoryId])
+        );
+    }
+
     /**
      * Handy function to prepare expenses inside the array_map function.
      * Currently unused.
