@@ -1,20 +1,20 @@
 {% set defaultFormClasses = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'%}
 
 {% macro renderExpense(expense) %}
-    <div class="expense-item table-row">
-        <div class="date table-cell">{{ expense.date }}</div>
-        <div class="type table-cell">{{ expense.type }}</div>
-        <div class="category table-cell">{{ expense.categoryId }}</div>
-        <div class="spending table-cell">{{ expense.spending }}</div>
-        <div class="description table-cell">
+    <div class="expense-item table-row border-solid border-[1px] border-slate-300">
+        <div class="date table-cell pl-4 py-3">{{ expense.date }}</div>
+        <div class="type table-cell py-3">{{ expense.type }}</div>
+        <div class="category table-cell py-3">{{ expense.categoryId }}</div>
+        <div class="spending table-cell py-3">{{ expense.spending }}</div>
+        <div class="description table-cell py-3">
             {% if expense.description %}
                 {{ expense.description }}
             {% else %}
-                <div class="text-gray-400">Description</div>
+                <div class="text-black text-opacity-0">Description</div>
             {% endif %}
         </div>
-        <a class="edit-link table-cell" href="/expenses/{{ expense.id }}">Edit</a>
-        <a class="delete-link table-cell" href="/expenses/delete/{{ expense.id }}" onclick="return confirm('Are you sure that ypu want to delete this expense?')">Delete</a>
+        <a class="edit-link table-cell py-3" href="/expenses/{{ expense.id }}">Edit</a>
+        <a class="delete-link table-cell py-3" href="/expenses/delete/{{ expense.id }}" onclick="return confirm('Are you sure that ypu want to delete this expense?')">Delete</a>
     </div>
 {% endmacro %}
 
@@ -38,7 +38,7 @@
 {% endmacro %}
 
 {% macro renderCategory(category) %}
-    <div class="category flex flex-row">
+    <div class="category-item flex flex-row border-solid border-[1px] border-slate-300 py-3 pl-2">
         <div class="name w-1/4">
             {{ category.name }}
         </div>

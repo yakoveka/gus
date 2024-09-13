@@ -1,5 +1,5 @@
 {% block content %}
-    <header>
+    {# <header>
         <nav class="flex justify-between">
             <div class="flex flex-col">
                 <div class="text-3xl">Dashboard</div>
@@ -21,5 +21,146 @@
                 </div>
             {% endif %}
         </nav>
-    </header>
+    </header> #}
+    <header class="bg-white">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <!-- Logo -->
+    <div class="flex lg:flex-1">
+      <a href="/expenses" class="-m-1.5 p-1.5">
+        <span class="sr-only">Your Company</span>
+        <!-- Replace with your logo -->
+        <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Expenses | Finances">
+      </a>
+    </div>
+    <!-- Mobile menu button -->
+    <div class="flex lg:hidden">
+      <button type="button" id="mobile-menu-button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+        <span class="sr-only">Open main menu</span>
+        <!-- Menu icon -->
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <!-- Desktop menu -->
+    <div class="hidden lg:flex lg:gap-x-12">
+      <!-- Dashboard link -->
+      <a href="https://hector-beta.vercel.app/" target="_blank" class="text-sm font-semibold leading-6 text-gray-900">Dashboard</a>
+      <!-- Expenses dropdown -->
+      <div class="relative">
+        <button type="button" id="expenses-menu-button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
+          Expenses
+          <!-- Dropdown icon -->
+          <svg class="h-5 w-5 flex-none text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0L5.25 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <!-- Dropdown menu -->
+        <div id="expenses-dropdown" class="absolute z-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1" style="display: none;">
+          <a href="{{ path('expense_index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Add expenses</a>
+          <a href="{{ path('expense_by_date') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Expenses by date</a>
+          <a href="{{ path('expense_by_category') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Expenses by category</a>
+        </div>
+      </div>
+      <!-- Categories link -->
+      <a href="{{ path('categories_index') }}" class="text-sm font-semibold leading-6 text-gray-900">Categories</a>
+      <!-- Logout link -->
+      {% if is_granted("ROLE_USER") %}
+        <a href="{{ path('app_logout') }}" class="text-sm font-semibold leading-6 text-gray-900">Logout</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="lg:hidden" style="display: none;">
+    <div class="fixed inset-0 z-10 bg-gray-600 bg-opacity-75"></div>
+    <div class="fixed inset-y-0 right-0 z-20 w-full max-w-sm bg-white p-6">
+      <div class="flex items-center justify-between">
+        <a href="/expenses" class="-m-1.5 p-1.5">
+          <span class="sr-only">Your Company</span>
+          <!-- Replace with your logo -->
+          <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Expenses | Finances">
+        </a>
+        <button type="button" id="mobile-menu-close-button" class="-m-2.5 rounded-md p-2.5 text-gray-700">
+          <span class="sr-only">Close menu</span>
+          <!-- Close icon -->
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile menu items -->
+      <div class="mt-6">
+        <div class="space-y-2">
+          <a href="https://hector-beta.vercel.app/" target="_blank" class="block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Dashboard</a>
+          <!-- Expenses collapsible menu -->
+          <div>
+            <button type="button" id="mobile-expenses-button" class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+              Expenses
+              <!-- Expand icon -->
+              <svg class="h-5 w-5 flex-none" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0L5.25 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <!-- Expenses sub-menu -->
+            <div id="mobile-expenses-menu" class="mt-2 space-y-2" style="display: none;">
+              <a href="{{ path('expense_index') }}" class="block rounded-lg pl-6 pr-3 py-2 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Add expenses</a>
+              <a href="{{ path('expense_by_date') }}" class="block rounded-lg pl-6 pr-3 py-2 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Expenses by date</a>
+              <a href="{{ path('expense_by_category') }}" class="block rounded-lg pl-6 pr-3 py-2 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Expenses by category</a>
+            </div>
+          </div>
+          <!-- Categories link -->
+          <a href="{{ path('categories_index') }}" class="block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Categories</a>
+          <!-- Logout link -->
+          {% if is_granted("ROLE_USER") %}
+            <a href="{{ path('app_logout') }}" class="block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Logout</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Desktop Expenses dropdown
+    const expensesButton = document.getElementById('expenses-menu-button');
+    const expensesDropdown = document.getElementById('expenses-dropdown');
+
+    expensesButton.addEventListener('click', function(event) {
+      event.stopPropagation();
+      expensesDropdown.style.display = expensesDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(event) {
+      if (!expensesButton.contains(event.target) && !expensesDropdown.contains(event.target)) {
+        expensesDropdown.style.display = 'none';
+      }
+    });
+
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+
+    mobileMenuButton.addEventListener('click', function() {
+      mobileMenu.style.display = 'block';
+    });
+
+    mobileMenuCloseButton.addEventListener('click', function() {
+      mobileMenu.style.display = 'none';
+    });
+
+    // Mobile Expenses sub-menu
+    const mobileExpensesButton = document.getElementById('mobile-expenses-button');
+    const mobileExpensesMenu = document.getElementById('mobile-expenses-menu');
+
+    mobileExpensesButton.addEventListener('click', function() {
+      mobileExpensesMenu.style.display = mobileExpensesMenu.style.display === 'block' ? 'none' : 'block';
+    });
+  });
+</script>
 {% endblock %}

@@ -14,21 +14,21 @@ a {
     }
 }
 
-.expenses-array {
+/* .expenses-array {
     div:nth-child(2n) {
         &.expense-item {
             background-color: lightsteelblue;
         }
     }
-}
+} */
 
-.categories-array {
+/* .categories-array {
     div:nth-child(2n) {
         &.category {
             background-color: lightsteelblue;
         }
     }
-}
+} */
 
 .arrow-button-styles {
     background-color: #ddd;
@@ -38,4 +38,16 @@ a {
     cursor: pointer;
     width: 100%;
     display: block;
+    border-radius: 5px;
+}
+
+.table {
+    border-collapse: collapse; 
+}
+
+.expense-item,
+.category-item {
+    &:hover {
+        background-color: rgb(226 232 240);
+    }
 }
