@@ -17,13 +17,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Expense;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ExpenseController extends AbstractController
 {
     #[Route('/', name: 'back')]
     public function redirectToDashboard(): JsonResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
         return $this->json([
             'id' => 1,
             'categoryId' => 'Test',
@@ -37,8 +37,6 @@ class ExpenseController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $user = $this->getUser();
         $userId = $user->getId();
 
@@ -89,8 +87,6 @@ class ExpenseController extends AbstractController
         ManagerRegistry $doctrine,
         Request $request,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         if (!$day && !$month && !$year) {
             $date = date("Y-m-d");
         } else {
@@ -140,8 +136,6 @@ class ExpenseController extends AbstractController
         ManagerRegistry $doctrine,
         Request $request,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $user = $this->getUser();
         $userId = $user->getId();
 
@@ -155,7 +149,7 @@ class ExpenseController extends AbstractController
             $categoryId = $category->getId();
         }
 
-        $expenses = array_reverse($doctrine->getRepository(Expense::class)->prepareExpensesByCategoryId($userId, $type, $categoryId));
+        $expenses = $doctrine->getRepository(Expense::class)->prepareExpensesByCategoryId($userId, $type, $categoryId);
 
         $form = $this->createForm(CategorySearchType::class, ['type' => $type, 'categoryId' => $categoryId]);
         $form->handleRequest($request);
@@ -176,8 +170,8 @@ class ExpenseController extends AbstractController
         );
     }
 
-    #[Route('/expenses/api', name: 'expense_api')]
-    public function expensesApi(
+    #[Route('/api/expenses', name: 'api_all_expenses')]
+    public function apiAllExpenses(
         ManagerRegistry $doctrine,
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
@@ -206,8 +200,6 @@ class ExpenseController extends AbstractController
     #[Route('/expenses/{id}', name: 'expense_update', methods: ['get'])]
     public function update(ManagerRegistry $doctrine, Request $request, int $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $user = $this->getUser();
         $userId = $user->getId();
 
@@ -254,5 +246,49 @@ class ExpenseController extends AbstractController
         $route = $request->headers->get('referer');
 
         return $this->redirect($route);
+    }
+
+    #[Route('/api/expense/add', name: 'api_expense_add')]
+    public function apiAdd(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator
+    ): JsonResponse {
+        $parameters = json_decode($request->getContent(), true);
+        $categoryId = (int) $parameters['categoryId'];
+        $userId = (int) $parameters['userId'];
+
+        try {
+            if (!$categoryId) {
+                throw new \Exception('Empty category id');
+            }
+
+            $category = $entityManager->getRepository(Category::class)->findOneBy(['id' => $categoryId]);
+
+            if (!$category || $category->getType() !== $parameters['type'] || ($category->getUserId() !== $userId)) {
+                throw new \Exception('Wrong category selected, please verify the correctness of your expense');
+            }
+
+            $expense = new Expense();
+
+            $expense->setUserId($userId);
+            $expense->setType($parameters['type']);
+            $expense->setCategoryId($categoryId);
+            $expense->setSpending($parameters['spending']);
+            $expense->setDescription($parameters['description']);
+            $expense->setDate($parameters['date']);
+
+            $errors = $validator->validate($expense);
+            if (count($errors) > 0) {
+                throw new \Exception((string) $errors);
+            }
+
+            $entityManager->persist($expense);
+            $entityManager->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse($e->getMessage(), 400);
+        }
+
+        return new JsonResponse('Success', 200);
     }
 }

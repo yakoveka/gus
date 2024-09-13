@@ -34,7 +34,7 @@ class LoginController extends AbstractController
         );
     }
 
-    #[Route(path: '/login/api', name: 'login_api')]
+    #[Route(path: '/api/login', name: 'api_login')]
     public function loginApi(
         Request $request,
         ManagerRegistry $doctrine,
