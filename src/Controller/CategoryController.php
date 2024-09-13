@@ -34,8 +34,6 @@ class CategoryController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $user = $this->getUser();
         $userId = $user->getId();
 
@@ -44,7 +42,6 @@ class CategoryController extends AbstractController
         $daily = $doctrine->getRepository(Category::class)->prepareCategoriesByType('daily', $userId);
 
         $category = new Category();
-        $this->denyAccessUnlessGranted('ROLE_USER');
         $form = $this->createForm(CategoryType::class, $category);
 
         $form->handleRequest($request);
@@ -61,5 +58,25 @@ class CategoryController extends AbstractController
             'category/list.html.twig',
             ['form' => $form, 'major' => $major, 'daily' => $daily, 'home' => $home]
         );
+    }
+
+    #[Route('/api/categories', name: 'api_categories')]
+    public function apiCategories(
+        ManagerRegistry $doctrine,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $parameters = json_decode($request->getContent(), true);
+
+        $categories = $entityManager->getRepository(Category::class)->findBy(['userId' => $parameters['userId'], 'type' => $parameters['type']]);
+
+        $categories = array_map(function ($category) use ($doctrine) {
+            return [
+                'id' => $category->getId(),
+                'name' => $category->getName(),
+            ];
+        }, $categories);
+
+        return $this->json(json_encode($categories));
     }
 }

@@ -25,6 +25,13 @@ class ExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, Expense::class);
     }
 
+    /**
+     * Prepare expenses array by date.
+     *
+     * @param int $userId
+     * @param string $date
+     * @return array
+     */
     public function prepareExpensesByDate(int $userId, string $date): array
     {
         $doctrine = $this->getEntityManager();
@@ -46,6 +53,14 @@ class ExpenseRepository extends ServiceEntityRepository
         );
     }
 
+    /**
+     * Prepare expenses array by category id.
+     *
+     * @param int $userId
+     * @param string $type
+     * @param int $categoryId
+     * @return array
+     */
     public function prepareExpensesByCategoryId(int $userId, string $type, int $categoryId): array
     {
         $doctrine = $this->getEntityManager();
@@ -63,7 +78,7 @@ class ExpenseRepository extends ServiceEntityRepository
                     'spending' => $expense->getSpending(),
                 ];
             },
-            $doctrine->getRepository(Expense::class)->findBy(['userId' => $userId, 'type' => $type, 'categoryId' => $categoryId])
+            $doctrine->getRepository(Expense::class)->findBy(['userId' => $userId, 'type' => $type, 'categoryId' => $categoryId], ['date' => 'DESC'])
         );
     }
 

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\ExpenseRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Validator\DateFormat;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 class Expense
@@ -14,19 +16,21 @@ class Expense
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: false)]
     private ?int $categoryId = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: false)]
     private ?float $spending = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $currency = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank]
+    #[DateFormat(format: 'Y-m-d', message: 'The date "{{ string }}" must be in "yyyy-mm-dd" format.')]
     private ?string $date = null;
 
     #[ORM\Column(length: 100)]
